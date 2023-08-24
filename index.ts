@@ -9,12 +9,11 @@ async function claimBlock() {
     functionName: 'claimBlock',
   });
   const hash = await walletClient.writeContract(request);
-  console.log('Successful transaction hash: ', hash)
+  console.log('Transaction hash: ', hash)
 }
-let latestBlock: Block;
 
 publicClient.watchBlocks({
-  onBlock: async (block) => {
+  onBlock: async () => {
     await claimBlock();
   },
 });
