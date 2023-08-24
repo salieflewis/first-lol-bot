@@ -1,12 +1,18 @@
-import { createPublicClient, http } from 'viem'
-import { mainnet } from 'viem/chains'
-import env from '../services/env'
+import { createPublicClient, createWalletClient, http, type Hash } from 'viem';
+import { zora, zoraTestnet } from 'viem/chains';
+import { privateKeyToAccount } from 'viem/accounts';
 
-const transport = http(
-  `https://eth-mainnet.g.alchemy.com/v2/${env.ALCHEMY_KEY}`,
-)
+const transport = http('https://testnet.rpc.zora.energy');
 
-export const client = createPublicClient({
-  chain: mainnet,
+export const publicClient = createPublicClient({
+  chain: zoraTestnet,
   transport,
-})
+});
+
+const account = privateKeyToAccount(process.env.PRIVATE_KEY as Hash);
+
+export const walletClient = createWalletClient({
+  account,
+  chain: zoraTestnet,
+  transport: http(),
+});

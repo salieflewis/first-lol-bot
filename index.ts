@@ -1,14 +1,20 @@
-import { type Block } from 'viem'
-import { client } from './viem/client'
+import { type Block, type Hex } from 'viem';
+import { publicClient, walletClient } from './viem/client';
+import { firstAbi } from './abi/firstAbi';
 
-/**
- *  Write some viem things here
- * */
-let latestBlock: Block
+async function claimBlock() {
+  const { request } = await publicClient.simulateContract({
+    address: process.env.FIRST_CONTRACT as Hex,
+    abi: firstAbi,
+    functionName: 'claimBlock',
+  });
+  const hash = await walletClient.writeContract(request);
+  console.log('Successful transaction hash: ', hash)
+}
+let latestBlock: Block;
 
-client.watchBlocks({
-  onBlock: (block) => {
-    console.log(block)
-    latestBlock = block
+publicClient.watchBlocks({
+  onBlock: async (block) => {
+    await claimBlock();
   },
-})
+});
